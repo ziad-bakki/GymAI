@@ -4,7 +4,7 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
 
 # Initialize the environment
-env = gym.make("CartPole-v1", render_mode="human")
+env = gym.make("CartPole-v1", render_mode="rgb_array")
 
 # Wrap the environment with Monitor for evaluation
 eval_env = Monitor(env)

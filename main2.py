@@ -1,42 +1,35 @@
-import random
 import gymnasium as gym
-import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
-from tensorflow.keras.optimizers import Adam
+from stable_baselines3 import DQN
+from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.evaluation import evaluate_policy
 
-from rl.agents import DQNAgent
-from rl.policy import BoltzmannQPolicy
-from rl.memory import SequentialMemory
+# Initialize the environment
+env = gym.make("CartPole-v1", render_mode="human")
 
-env = gym.make("CartPole-v1")
+# Wrap the environment with Monitor for evaluation
+eval_env = Monitor(env)
 
-states = env.observation_space.shape[0]
-actions = env.action_space.n
+# Initialize the DQN model
+model = DQN("MlpPolicy", env, learning_rate=0.001, verbose=1)
 
-model = Sequential()
-model.add(Flatten(input_shape=(1, states)))
-model.add(Dense(24, activation="relu"))
-model.add(Dense(24, activation="relu"))
-model.add(Dense(actions, activation="linear"))
+# Train the model
+model.learn(total_timesteps=100000)
 
-agent = DQNAgent(
-    model=model,
-    memory=SequentialMemory(limit=50000, window_length=1),
-    policy=BoltzmannQPolicy(),
-    nb_actions=actions,
-    nb_steps_warmup=10,
-    target_model_update=0.01
-)
+# Evaluate the trained model
+mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10)
+print(f"Mean reward: {mean_reward}, Std reward: {std_reward}")
 
-agent.compile(Adam(lr=0.001), metrics=["mae"])
-agent.fit(env, nb_steps=100000, visualize=False, verbose=1)
-
-results = agent.test(env, nb_episodes=10, visualize=True)
-
-print(np.mean(results.history["episode_reward"]))
+# Test the trained model
+obs, _ = env.reset()
+for _ in range(1000):
+    action, _ = model.predict(obs, deterministic=True)
+    obs, reward, done, truncated, _ = env.step(action)
+    env.render()
+    if done or truncated:
+        obs, _ = env.reset()
 
 env.close()
+
 
 # episodes = 10
 # for episode in range(1, episodes+1):

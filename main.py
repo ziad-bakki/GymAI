@@ -9,3 +9,4 @@ for _ in range(1000):
     if terminated or truncated:
         observation, info = env.reset()
 env.close()
+

@@ -8,7 +8,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 # Paths for saving/loading the model and VecNormalize statistics
 MODEL_PATH = "dqn_cartpole_model.zip"
 VECNORM_PATH = "vecnormalize_stats.pkl"
-
+ 
 # Initialize the environment
 def make_env():
     env = gym.make("CartPole-v1", render_mode="rgb_array")

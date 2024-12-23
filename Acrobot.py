@@ -20,7 +20,7 @@ else:
         "MlpPolicy",  # Multi-Layer Perceptron policy
         env,
         verbose=1,
-        learning_rate=0.0003,
+        learning_rate=0.00001,
         n_steps=2048,
         batch_size=64,
         n_epochs=10,
@@ -28,7 +28,7 @@ else:
 
 # Train the model further
 print("Training the model...")
-model.learn(total_timesteps=100000)
+model.learn(total_timesteps=500000)
 
 # Save the trained model
 model.save(MODEL_PATH)

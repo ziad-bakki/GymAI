@@ -1,28 +1,38 @@
+import os
 import gymnasium as gym
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
+
+# Filepath for saving and loading the model
+MODEL_PATH = "ppo_acrobot_model.zip"
 
 # Initialize the Acrobot environment
 env_id = "Acrobot-v1"
 env = gym.make(env_id, render_mode="rgb_array")
 
-# Initialize the PPO model
-model = PPO(
-    "MlpPolicy",  # Multi-Layer Perceptron policy
-    env,
-    verbose=1,
-    learning_rate=0.0003,
-    n_steps=2048,
-    batch_size=64,
-    n_epochs=10,
-)
+# Check if a saved model exists
+if os.path.exists(MODEL_PATH):
+    print("Loading existing model...")
+    model = PPO.load(MODEL_PATH, env=env)
+else:
+    print("Creating new model...")
+    model = PPO(
+        "MlpPolicy",  # Multi-Layer Perceptron policy
+        env,
+        verbose=1,
+        learning_rate=0.0003,
+        n_steps=2048,
+        batch_size=64,
+        n_epochs=10,
+    )
 
-# Train the model
-print("Training the PPO model...")
+# Train the model further
+print("Training the model...")
 model.learn(total_timesteps=100000)
 
 # Save the trained model
-model.save("ppo_acrobot_model")
+model.save(MODEL_PATH)
+print(f"Model saved to {MODEL_PATH}")
 
 # Evaluate the model
 print("Evaluating the trained model...")

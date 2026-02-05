@@ -1,1 +1,1 @@
-Learning about GymAI
+Learning GymAI
